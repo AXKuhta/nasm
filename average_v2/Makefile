@@ -4,6 +4,9 @@ OBJS = $(SOURCE:asm=o)
 all: result.elf
 	@echo "Done"
 
+run: result.elf
+	@./result.elf
+
 result.elf: $(OBJS)
 	@echo " [LD] result.elf"
 	@gcc -g -fno-pie -no-pie $^ -o result.elf

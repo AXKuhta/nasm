@@ -4,6 +4,23 @@ global main
 extern printf
 extern strtol
 
+; Parses ints using strtol()
+; rbx = int[] start
+; rbp = int[] end
+; lastpos = char* buffer
+parse_ints:
+	.loop:
+		mov rdi, [lastpos]	; char* nptr = lastpos
+		mov rsi, lastpos	; char** endptr = &lastpos
+		xor edx, edx		; base = 0
+		call strtol			; strtol()
+		mov [rbx], eax		; save
+		inc qword [lastpos]	; skip , or \n
+		add rbx, 4			; i++
+		cmp rbx, rbp
+	jne .loop
+	ret
+
 main:
 	;
 	; Read file
@@ -29,17 +46,7 @@ main:
 	add rbp, 28
 	mov rbx, x
 	mov qword [lastpos], buffer
-
-	.read_x:
-		mov rdi, [lastpos]	; char* nptr = lastpos
-		mov rsi, lastpos	; char** endptr = &lastpos
-		xor edx, edx		; base = 0
-		call strtol			; strtol()
-		mov [rbx], eax		; save
-		inc qword [lastpos]	; skip , or \n
-		add rbx, 4			; i++
-		cmp rbx, rbp
-	jne .read_x
+	call parse_ints
 
 	;
 	; Parse y
@@ -48,17 +55,7 @@ main:
 	mov rbp, y
 	add rbp, 28
 	mov rbx, y
-
-	.read_y:
-		mov rdi, [lastpos]	; char* nptr = lastpos
-		mov rsi, lastpos	; char** endptr = &lastpos
-		xor edx, edx		; base = 0
-		call strtol			; strtol()
-		mov [rbx], eax		; save
-		inc qword [lastpos]	; skip , or \n
-		add rbx, 4			; i++
-		cmp rbx, rbp
-	jne .read_y
+	call parse_ints
 
 	xor rax, rax
 	xor rcx, rcx

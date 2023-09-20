@@ -17,6 +17,7 @@ main:
 	call printf
 	add rsp, 16
 	pop rbp
+	xor rax, rax
 	ret
 
 section .data
